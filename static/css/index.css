@@ -1,0 +1,96 @@
+body {
+  font-family: 'Fauna One', 'Times New Roman', serif;
+  font-size: 14px;
+  margin: 0px auto 0px 150px;
+  width: 480px;
+}
+
+/* Links */
+
+a {
+  color: #94002D;
+  text-decoration: none;
+}
+
+a:hover {
+  border-bottom: 1px solid #94002D;
+  color: #333;
+}
+
+/* Headers */
+
+h1 {
+  margin-bottom: 50px;
+}
+
+/* Forms */
+
+.field {
+  margin-bottom: 10px;
+}
+
+.field label {
+  float: left;
+  width: 100px;
+}
+
+.field input {
+  width: 200px;
+}
+
+.field #submit {
+  margin-left: 250px;
+  margin-top: 20px;
+  width: auto;
+}
+
+/* User elements */
+
+#navbar {
+  border-bottom: 1px solid black;
+  font-size: 13px;
+  /*background: #CCC;*/
+  /*padding: 0px 10px;*/
+}
+
+#navbar h2 {
+  display: inline-block;
+  width: auto;
+}
+
+#navbar #user-nav {
+  float: right;
+  margin-top: 15px;
+}
+
+#navbar #user-nav a {
+  display: inline-block;
+  margin: 0 10px;
+}
+
+#navbar #user-nav a:last-child {
+  border-right: 0px;
+  margin-right: 0px;
+}
+
+#navbar .divider {
+  border-left: 1px solid black;
+  display: inline-block;
+  padding: 0px;
+}
+
+/* Logo */
+
+h2.logo {
+  font-size: 1em;
+  margin: 17px 0px 15px 0px;
+}
+
+h2.logo a {
+  color: #94002D;
+}
+
+h2.logo a:hover {
+  border-bottom: 0px;
+  color: #94002D;
+}
