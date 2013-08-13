@@ -10,7 +10,6 @@
     "debug": "~0.7.2",
     "express": "3.x",
     "jade": "0.32.x",
-    "level": "0.12.x",
     "marked": "0.2.x"
   },
   "devDependencies": {
