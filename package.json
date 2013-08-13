@@ -1,0 +1,23 @@
+{
+  "private": true,
+  "name": "azonto",
+  "version": "0.1.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/abi/azonto"
+  },
+  "dependencies": {
+    "debug": "~0.7.2",
+    "express": "3.x",
+    "jade": "0.32.x",
+    "level": "0.12.x",
+    "marked": "0.2.x"
+  },
+  "devDependencies": {
+    "nodemon": "*",
+    "bower": "0.9.x"
+  },
+  "keywords": [],
+  "author": "Abi Raja",
+  "license": "MIT"
+}
