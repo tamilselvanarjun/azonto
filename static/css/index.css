@@ -94,3 +94,21 @@ h2.logo a:hover {
   border-bottom: 0px;
   color: #94002D;
 }
+
+#unsupported {
+  display: none;
+  color: red;
+}
+
+#dragregion {
+  text-align: center;
+  padding: 3em 0;
+  border: 2px dashed #555;
+  border-radius: 5px;
+}
+
+#dragregion.hover {
+  border-color: #f00;
+  border-style: solid;
+  box-shadow: inset 0 3px 4px #888;
+}
