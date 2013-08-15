@@ -10,7 +10,10 @@
     "debug": "~0.7.2",
     "express": "3.x",
     "jade": "0.32.x",
-    "marked": "0.2.x"
+    "marked": "0.2.x",
+    "node-uuid": "~1.4.0",
+    "randword": "~0.1.0",
+    "socket.io": "~0.9.16"
   },
   "devDependencies": {
     "nodemon": "*",
