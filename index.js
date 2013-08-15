@@ -7,6 +7,9 @@ var fs = require('fs')
 var http = require('http')
 var jade = require('jade')
 var path = require('path')
+var randword = require('randword')
+var sio = require('socket.io')
+var uuid = require('node-uuid')
 
 function SimpleApp (opts, cb) {
 
@@ -39,13 +42,51 @@ SimpleApp.prototype.start = function (cb) {
   app.set('views', path.join(config.rootPath, '/static/views'))
   app.set('view engine', 'jade')
 
-  app.get('/', function (req, res) { res.render('index') })
+  app.get('/', function (req, res) {
+    randword(function (err, word) {
+      if (err) {
+        var name = 'User ' + Math.round(Math.random() * 10)
+      } else {
+        var name = word
+      }
+      res.render('index', {id: uuid.v4(), name: name})
+    })
+  })
 
   // Static files
   app.use(express.static(path.join(config.rootPath, 'static')))
   app.use('/components', express.static(path.join(config.rootPath, 'components')))
 
   app.use(express.errorHandler())
+
+  // Websocket server (for WebRTC signalling)
+  var io = sio.listen(self.server)
+  var sockets = []
+
+  io.sockets.on('connection', function (socket) {
+    socket.on('identify', function (user) {
+      socket.set('user', user, function (){
+        sockets.forEach(function (socket) {
+          socket.emit('join', user)
+        })
+        sockets.push(socket)
+      })
+    })
+
+    socket.on('disconnect', function () {
+      socket.get('user', function (err, user) {
+        // Note: An error can only occur if the user hasn't identified yet
+        // in which case, the other users in the room wouldn't know of her
+        // existence anyway so we don't have to broadcast anything.
+        if (!err) {
+          sockets.forEach(function (socket) {
+            socket.emit('leave', user)
+          })
+        }
+      })
+    })
+  })
+
 
   self.server.listen(self.port, function (err) {
     if (!err) {
