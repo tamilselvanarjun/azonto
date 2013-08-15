@@ -18,22 +18,60 @@ function handleFileDrop(event) {
     handleFiles(files);
 }
 
+function updateProgress(event) {
+    if (event.lengthComputable) {
+	document.getElementById('progressbar').value = event.loaded;
+    }
+}
+
 function handleFiles(files) {
     var file = files[0];
     //TODO: check that filetype is valid mp3
     var reader = new FileReader();
+    reader.onloadstart = function(event) {
+	var pbar = document.getElementById('progressbar');
+	$('#progressbar').show();
+	pbar.max = event.total;
+    };
+    reader.onprogress = updateProgress;
     reader.onload = handleReaderLoad;
     reader.readAsArrayBuffer(file);
 }
 
 function handleReaderLoad(event) {
+    $('#progressbar').hide();
     var arrbuff = event.target.result;
-    console.log(arrbuff);
+    context.decodeAudioData(arrbuff, function(audiobuf) {
+	    source = context.createBufferSource();
+	    source.buffer = audiobuf;
+	    source.connect(context.destination);
+	    $('#togglebtn').show();
+	}, onDecodeError);
     //send to other people in this room with webrtc
 }
 
+function playSong() {
+    source.start(0);
+}
+
+function stopSong() {
+    //TODO: actually implement pausing, stop should only be called once.
+    source.stop(0);
+}
+
+function toggleSong() {
+    this.playing ? this.stopSong() : this.playSong();
+    this.playing = !this.playing;
+}
+
+function onDecodeError(err) {
+    alert("Error decoding audio file: "+err);
+    console.log("decodeAudioData error: "+err);
+}
+
+var context;
+var source;
 $(document).ready(function () {
-  // TODO: Add code here
 	if (!(window.File && window.FileReader)) {
 		$('#unsupported').show();
 	}
@@ -43,4 +81,12 @@ $(document).ready(function () {
 	dragRegion.addEventListener('dragover', handleDragOver, false);
 	dragRegion.addEventListener('dragleave', handleDrag, false);
 	dragRegion.addEventListener('drop', handleFileDrop, false);
+
+	try {
+	    window.AudioContext = window.AudioContext||window.webkitAudioContext;
+	    context = new AudioContext();
+	}
+	catch(exc) {
+	    alert('Web Audio API is not supported in this browser.');
+	}
 })

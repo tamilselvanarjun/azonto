@@ -23,7 +23,10 @@ block content
     | application to run. Please reference the table
     | <a href="http://caniuse.com/fileapi">here</a> and install a browser that
     | supports it.
-  #dragregion Drag your music file here.
+  div.container
+    #dragregion Drag your music file here.
+    progress(id="progressbar", value="0")
+    input(type="button", id="togglebtn", onclick="toggleSong()", value="Play/Pause")
   div.room
     h2 Users
     div.me
