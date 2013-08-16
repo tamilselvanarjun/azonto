@@ -2,20 +2,10 @@ extends base
 
 block head
   title Azonto
-  script(type='text/javascript', src='/js/main.js')
-  script(src='/socket.io/socket.io.js')
   script.
-    var socket = io.connect('http://localhost:5555')
     var me = {id: '#{id}', name: '#{name}'}
-    socket.emit('identify', me)
-
-    socket.on('join', function (user) {
-      document.querySelector('ul.users').innerHTML += user.name + ' joined. <br/>'
-    })
-
-    socket.on('leave', function (user) {
-      document.querySelector('ul.users').innerHTML += user.name + ' left. <br/>'
-    })
+  script(src='/socket.io/socket.io.js')
+  script(type='text/javascript', src='/js/main.js')
 
 block content
   h1.header.logo Azonto

@@ -90,3 +90,77 @@ $(document).ready(function () {
     alert('Web Audio API is not supported in this browser.');
   }
 })
+
+/* WebSocket */
+var socket = io.connect('http://localhost:5555')
+socket.emit('identify', me)
+
+socket.on('join', function (user) {
+  document.querySelector('ul.users').innerHTML += user.name + ' joined. <br/>'
+})
+
+socket.on('leave', function (user) {
+  document.querySelector('ul.users').innerHTML += user.name + ' left. <br/>'
+})
+
+/* WebRTC */
+
+var config = {
+  isFirefox: false,
+  stun: {
+    'iceServers': [
+      {'url': config.isFirefox
+        ? 'stun:23.21.150.121'
+        : 'stun:stun.l.google.com:19302'
+      }
+    ]
+  },
+  {
+    'optional': config.isFirefox ? [] : [{ 'RtpDataChannels': true }]
+  }
+}
+
+var _RTCPeerConnection =
+  window.mozRTCPeerConnection || window.webkitRTCPeerConnection
+var _RTCSessionDescription =
+  window.mozRTCSessionDescription || window.RTCSessionDescription
+var _RTCIceCandidate = window.mozRTCIceCandidate || window.RTCIceCandidate
+
+function PeerChannel (peerId, isInitiator) {
+  var self = this
+
+  /**
+   * ID of the peer that this channel is connected to.
+   * @type {number}
+   */
+  self.peerId = peerId
+
+  /**
+   * Did this client initiate the connection to the peer?
+   * @type {boolean}
+   */
+  self.isInitiator = isInitiator
+
+  /**
+   * DataChannel instance. Returned from createDataChannel().
+   * @type {RTCDataChannel}
+   */
+  self.dataChannel = null
+
+  /**
+   * Is the DataChannel open?
+   * @type {boolean}
+   */
+  self.isOpen = false
+
+  self.init()
+}
+
+PeerChannel.prototype.init = function () {
+  try {
+    self.peerConnection = new _RTCPeerConnection(config.stun, config.peerConnectionOptions)
+  } catch (e) {
+    console.error('Failed to create RTCPeerConnection.', e)
+    return
+  }
+}
