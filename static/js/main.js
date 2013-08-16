@@ -46,25 +46,37 @@ function handleReaderLoad(event) {
   var arrbuff = event.target.result;
   currentSong = arrbuff
   context.decodeAudioData(arrbuff, function(audiobuf) {
-    source = context.createBufferSource();
-    source.buffer = audiobuf;
-    source.connect(context.destination);
+	  this.audiobuf = audiobuf;
     $('#togglebtn').show();
   }, onDecodeError);
   //send to other people in this room with webrtc
 }
 
 function playSong() {
-  source.start(0);
+  source = context.createBufferSource();
+  source.buffer = audiobuf;
+  source.connect(context.destination);
+  startTime = context.currentTime;
+  source.start(0, startOffset);
 }
 
-function stopSong() {
-  //TODO: actually implement pausing, stop should only be called once.
+function pauseSong() {
   source.stop(0);
+  startOffset += context.currentTime - startTime;
 }
 
 function toggleSong() {
-  this.playing ? this.stopSong() : this.playSong();
+  if (this.playing) {
+    if (startOffset + context.currentTime - startTime >= audiobuf.duration) {
+      startOffset = 0;
+      this.playSong();
+      this.playing = !this.playing;
+    } else {
+      this.pauseSong();
+    }
+  } else {
+    this.playSong();
+  }
   this.playing = !this.playing;
 }
 
@@ -74,7 +86,10 @@ function onDecodeError(err) {
 }
 
 var context;
+var audiobuf;
 var source;
+var startTime = 0;
+var startOffset = 0;
 $(document).ready(function () {
   if (!(window.File && window.FileReader)) {
     $('#unsupported').show();
