@@ -1,7 +1,7 @@
 module.exports = SimpleApp
 
 var config = require('./config')
-var debug = require('debug')('simple-app')
+var debug = require('debug')('azonto')
 var express = require('express')
 var fs = require('fs')
 var http = require('http')
@@ -62,10 +62,11 @@ SimpleApp.prototype.start = function (cb) {
   // Websocket server (for WebRTC signalling)
   var io = sio.listen(self.server)
   var sockets = []
-
+  var socketMap = {}
   io.sockets.on('connection', function (socket) {
     socket.on('identify', function (user) {
-      socket.set('user', user, function (){
+      socket.set('user', user, function () {
+        socketMap[user.id] = socket
         sockets.forEach(function (socket) {
           socket.emit('join', user)
         })
@@ -85,6 +86,29 @@ SimpleApp.prototype.start = function (cb) {
         }
       })
     })
+
+    socket.on('offer', function () {
+      socket.get('user', function (err, user) {
+        debug('Received offer from ' + user.name)
+        // Tell everyone to connect to this user
+        sockets.forEach(function (socket) {
+          socket.emit('file', {id: 'music', user: user})
+        })
+      })
+    })
+
+    socket.on('iceCandidate', function (msg) {
+      socketMap[msg.to].emit('iceCandidate', msg)
+    })
+
+    socket.on('connectionOffer', function (msg) {
+      socketMap[msg.to].emit('connectionOffer', msg)
+    })
+
+    socket.on('connectionAnswer', function (msg) {
+      socketMap[msg.to].emit('connectionAnswer', msg)
+    })
+
   })
 
 
